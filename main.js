@@ -9,21 +9,11 @@ let uuid = require('uuid/v1');
 
 // MongoDB
 let assert = require('assert');
-let bcrypt = require('bcrypt-nodejs');
+let bcrypt = require('bcrypt');
+let db = require('./dbUtils.js');
 let mongoose = require('mongoose');
-mongoose.Promise = globa.Promise;
-mongoose.connect('mongodb://localhost:27017/', { userNewUrlParser: true });
-
-let Schema = mongoose.Schema;
-let userSchema = new Schema({
-	username: {
-		type: String,
-		unique: true,
-		index: true
-	},
-	pwHash: String
-}, { collection: 'users' });
-let User = mongoose.model('user', userSchema);
+mongoose.Promise = global.Promise;
+mongoose.connect(db.dbUrl, { useNewUrlParser: true });
 
 
 // Middleware
@@ -41,10 +31,10 @@ app.set('view engine', 'pug');
 app.use(session({
 	genid: (request) => { return uuid(); },
 	resave: false,
-	saveUnitialized: false,
-	cookie: { secure: true },
-	secret: 'apollo slackware prepositional expectations'
-});
+	saveUninitialized: false,
+	//cookie: { secure: true },
+	secret: 'subcommissaries nonnavigable preamplifier denominator pseudocultural'
+}));
 
 
 // Start Express listener on port

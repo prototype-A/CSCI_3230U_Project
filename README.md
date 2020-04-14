@@ -2,6 +2,6 @@
 Web Development Final Project
   
 ## Group Members:
-Alex Zheng (100625391)
+Alex Zheng (100625391)  
 Andre Dallaire ()
   
