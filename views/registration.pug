@@ -1,0 +1,61 @@
+doctype
+html(class="has-navbar-fixed-top")
+	head
+		title= title
+
+		link(rel="stylesheet",
+			href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css",  
+			crossorigin="anonymous")
+
+		script(src="https://use.fontawesome.com/releases/v5.3.1/js/all.js",  
+			crossorigin="anonymous")
+
+		script(src="https://code.jquery.com/jquery-3.5.0.min.js",  
+			crossorigin="anonymous")
+
+		script(src="/public/scripts/registration.js",  
+			crossorigin="anonymous")
+
+		link(rel="stylesheet",
+			href="/public/styles/style.css")
+
+		nav(class="navbar is-fixed-top", role="navigation" aria-label="dropdown navigation")
+			div(class="navbar-brand")
+				a(href="/", class="navbar-item") Home
+			div(class="navbar-menu")
+				div(class="navbar-end")
+					if (username)
+						div(class="navbar-item") Hello,
+						div(class="navbar-item has-dropdown is-hoverable")
+							a(class="navbar-link", id="username") username
+							div(class="navbar-dropdown")
+								a(href="/user", class="navbar-item") Profile
+								hr(class="navbar-divider")
+								a(class="navbar-item") Log out
+					else
+						a(href="/login", class="navbar-item") Login
+
+	body
+		div(class="title") Register an account
+		div(class="columns is-centered")
+			form(method="post", class="registration-col column is-one-third has-background-white-ter validate" id="registrationForm")
+				label(class="label", for="username") Username:
+				div(class="field")
+					div(class="control has-icons-left")
+						input(type="text", class="input is-dark", id="usernameField", name="username", placeholder="Username")
+						span(class="icon is-small is-left")
+							i(class="fas fa-address-card")
+				div(class="errorMessage content columns is-centered" id="usernameErrorMessage")= usernameErrorMessage
+				
+				label(class="label", for="password") Password:
+				div(class="field has-addons")
+					div(class="control has-icons-left is-expanded")
+						input(type="password", class="input is-dark", id="passwordField", name="password", placeholder="Password")
+						span(class="icon is-small is-left")
+							i(class="fas fa-key")
+					div(class="control")
+						button(type="button", class="button" id="showPasswordBtn") Show
+				div(class="errorMessage content columns is-centered" id="passwordErrorMessage")= passwordErrorMessage
+				
+				div(class="buttons is-centered")
+					button(type="submit", class="button is-link is-large", id="registerBtn") Register

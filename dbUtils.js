@@ -56,6 +56,16 @@ function createUser(username, password, userType) {
 }
 
 
+// Check if user exists in db
+function checkUserExists(username) {
+	User.find({ username: username }).then(function(result) {
+		return (result.length > 0) ? true : false;
+	}).then(function(result) {
+		return result;
+	});
+}
+
+
 // Module exports
 module.exports = {
 	collections,
