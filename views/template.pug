@@ -1,0 +1,40 @@
+doctype
+html
+    head
+        title= title
+        
+        link(rel="stylesheet",
+             href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css",  
+             crossorigin="anonymous")
+
+        script(src="https://use.fontawesome.com/releases/v5.3.1/js/all.js",  
+             crossorigin="anonymous")
+             
+        link(rel="stylesheet",
+             href="/public/styles/style.css")
+
+        nav(class="navbar", role="navigation" aria-label="main navigation")
+            div(class="navbar-brand")
+                a(href="/", class="navbar-item") Home
+                a(href="/checkUsername", class="navbar-item") Check Username
+                a(href="/help", class="navbar-item") Help
+
+    body
+        div(class="content columns is-centered")= message
+        
+        div(class="columns is-centered")
+            form(method="post",class="column is-one-third validate")
+                div(class="field")
+                    label(class="label", for="username") Username:
+                    div(class="control has-icons-left")
+                        if (result)
+                            if (result == 'init')
+                                input(type="text", class="input is-dark", id="username", name="username", placeholder="Username")
+                            else if (result == 'accepted')
+                                input(type="text", class="input is-success", id="username", name="username", placeholder="Username")
+                            else if (result == 'rejected')
+                                input(type="text", class="input is-danger", id="username", name="username", placeholder="Username")
+                        span(class="icon is-small is-left")
+                            i(class="fas fa-key")
+                div(class="buttons")
+                    button(type="submit",class="button is-link") Check
