@@ -1,0 +1,19 @@
+// Top Navbar
+nav(class="navbar is-fixed-top", role="navigation" aria-label="dropdown navigation")
+	// Left side of navbar
+	div(class="navbar-brand")
+		a(href="/", class="navbar-item") Home
+
+	// Right side of navbar
+	div(class="navbar-menu")
+		div(class="navbar-end")
+			if (username)
+				div(class="navbar-item") Hello,
+				div(class="navbar-item has-dropdown is-hoverable")
+					a(class="navbar-link", id="username")= username
+					div(class="navbar-dropdown")
+						a(href="/user", class="navbar-item") Profile
+						hr(class="navbar-divider")
+						a(href="/logout", class="navbar-item") Log out
+			else
+				a(href="/login", class="navbar-item") Login

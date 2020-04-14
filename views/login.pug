@@ -3,15 +3,8 @@ html(class="has-navbar-fixed-top")
 	head
 		title= title
 
-		link(rel="stylesheet",
-			href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css",  
-			crossorigin="anonymous")
-
-		script(src="https://use.fontawesome.com/releases/v5.3.1/js/all.js",  
-			crossorigin="anonymous")
-
-		script(src="https://code.jquery.com/jquery-3.5.0.min.js",  
-			crossorigin="anonymous")
+		// External dependency downloads
+		include includes/externalDependencies.pug
 
 		script(src="/public/scripts/login.js",  
 			crossorigin="anonymous")
@@ -19,17 +12,17 @@ html(class="has-navbar-fixed-top")
 		link(rel="stylesheet",
 			href="/public/styles/style.css")
 
-		nav(class="navbar is-fixed-top", role="navigation" aria-label="dropdown navigation")
-			div(class="navbar-brand")
-				a(href="/", class="navbar-item") Home
-			div(class="navbar-menu")
-				div(class="navbar-end")
-					a(href="/login", class="navbar-item") Login
+		// Top Navbar
+		include includes/navbar.pug
 
 	body
-		div(class="title") Log in
+		// Header
+		h1(class="title") Log in
+		
 		div(class="columns is-centered")
-			form(method="post", class="input-col column is-one-third has-background-white-ter validate" id="loginForm")
+			// User info input
+			form(method="post", class="input-panel column is-one-third has-background-white-ter validate" id="loginForm")
+				// Username input
 				label(class="label", for="username") Username:
 				div(class="field")
 					div(class="control has-icons-left")
@@ -37,6 +30,7 @@ html(class="has-navbar-fixed-top")
 						span(class="icon is-small is-left")
 							i(class="fas fa-address-card")
 				
+				// Password input
 				label(class="label", for="password") Password:
 				div(class="field has-addons")
 					div(class="control has-icons-left is-expanded")
@@ -45,9 +39,11 @@ html(class="has-navbar-fixed-top")
 							i(class="fas fa-key")
 					div(class="control")
 						button(type="button", class="button" id="showPasswordBtn") Show
-						
+				
+				// Error message
 				div(class="errorMessage content columns is-centered" id="errorMessage")= errorMessage
 				
+				// Buttons
 				div(class="buttons is-centered")
 					a(href="/register", class="button is-link is-large", id="registerBtn") Register
 					button(type="submit", class="button is-link is-large", id="loginBtn") Log In
