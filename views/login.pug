@@ -13,7 +13,7 @@ html(class="has-navbar-fixed-top")
 		script(src="https://code.jquery.com/jquery-3.5.0.min.js",  
 			crossorigin="anonymous")
 
-		script(src="/public/scripts/registration.js",  
+		script(src="/public/scripts/login.js",  
 			crossorigin="anonymous")
 
 		link(rel="stylesheet",
@@ -27,16 +27,15 @@ html(class="has-navbar-fixed-top")
 					a(href="/login", class="navbar-item") Login
 
 	body
-		div(class="title") Register an account
+		div(class="title") Log in
 		div(class="columns is-centered")
-			form(method="post", class="input-col column is-one-third has-background-white-ter validate" id="registrationForm")
+			form(method="post", class="input-col column is-one-third has-background-white-ter validate" id="loginForm")
 				label(class="label", for="username") Username:
 				div(class="field")
 					div(class="control has-icons-left")
 						input(type="text", class="input is-dark", id="usernameField", name="username", placeholder="Username")
 						span(class="icon is-small is-left")
 							i(class="fas fa-address-card")
-				div(class="errorMessage content columns is-centered" id="usernameErrorMessage")= usernameErrorMessage
 				
 				label(class="label", for="password") Password:
 				div(class="field has-addons")
@@ -46,7 +45,9 @@ html(class="has-navbar-fixed-top")
 							i(class="fas fa-key")
 					div(class="control")
 						button(type="button", class="button" id="showPasswordBtn") Show
-				div(class="errorMessage content columns is-centered" id="passwordErrorMessage")= passwordErrorMessage
+						
+				div(class="errorMessage content columns is-centered" id="errorMessage")= errorMessage
 				
 				div(class="buttons is-centered")
-					button(type="submit", class="button is-link is-large", id="registerBtn") Register
+					a(href="/register", class="button is-link is-large", id="registerBtn") Register
+					button(type="submit", class="button is-link is-large", id="loginBtn") Log In

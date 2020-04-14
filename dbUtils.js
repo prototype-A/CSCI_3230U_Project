@@ -37,8 +37,8 @@ const salt = bcrypt.genSaltSync(saltRounds);
 
 
 // Create user in db
-function createUser(username, password, userType) {
-	let passwordHash = bcrypt.hashSync(password, salt);
+function createUser(username, passwordText, userType) {
+	let passwordHash = bcrypt.hashSync(passwordText, salt);
 	
 	let newUser = new User({
 		username: username,
@@ -62,6 +62,22 @@ function checkUserExists(username) {
 		return (result.length > 0) ? true : false;
 	}).then(function(result) {
 		return result;
+	});
+}
+
+
+// Log in to user
+function processLogin(username, passwordText) {
+	User.find({
+		username: username
+	}).then(function(result) {
+		if (result.length > 0 && bcrypt.compareSync(passwordText, users[0].pwHash)) {
+			// Login successful
+			return users[0].id;
+		} else {
+			// Login failed
+			return null;
+		}
 	});
 }
 

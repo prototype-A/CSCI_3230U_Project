@@ -40,31 +40,26 @@ app.use(session({
 
 
 // Main page
-/*
 app.get('/', (req, res) => {
 	let session = req.session;
 	let username = '';
 	if (session.username) {
 		username = session.username;
 	}
-	response.render('index', {
-		title: '',
-		description: '',
+	res.render('index', {
+		title: 'Home',
 		username: username
 	});
-});
-*/
-app.get('/', (req, res) => {
-	res.redirect('/register');
 });
 
 
 // User registration page
-const userRegistrationTitle = 'Registration';
-const registrationTemplate = 'registration';
 app.get('/register', (req, res) => {
-	res.render(registrationTemplate, {
-		title: userRegistrationTitle
+	// Check if user is already logged in
+	doIfNotLoggedIn(req, res, () => {
+		res.render('registration', {
+			title: 'Registration'
+		});
 	});
 });
 // Validate user registration info
@@ -78,6 +73,7 @@ app.post('/register', (req, res) => {
 	
 	// Check username
 	if (req.body.username && req.body.username !== '') {
+		// TODO: Database check
 		//let userExists = db.checkUserExists(usernameToCheck).then((result) => { return result; })
 		let userExists = false;
 		if (userExists) {
@@ -117,8 +113,64 @@ app.post('/register', (req, res) => {
 });
 
 
+// User login page
+app.get('/login', (req, res) => {
+	// Check if user is already logged in
+	doIfNotLoggedIn(req, res, () => {
+		res.render('login', {
+			title: 'Log In'
+		});
+	});
+});
+// Validate user login info
+app.post('/login', (req, res) => {
+	// TODO: Database check
+	//req.session.userId = processLogin(req.body.username, req.body.password);
+	req.session.userId = 'userIdHash';
+	if (req.session.userId !== null) {
+		// Login successful
+		req.session.username = req.body.username;
+		sendRedirect(res, '/');
+	} else {
+		// Login unsuccessful
+		res.send({
+			errorMessage: 'Username and password combination not found'
+		});
+	}
+});
+
+
+// User logout
+app.get('/logout', (req, res) => {
+	req.session.userId = undefined;
+	req.session.username = undefined;
+	redirectHome(res);
+});
+
+
 // Start Express listener on port
 app.set('port', PORT);
 app.listen(app.get('port'), function() {
 	console.log('Express server started on port: ' + app.get('port'));
 });
+
+
+// Check if user is logged in
+function doIfNotLoggedIn(req, res, callback) {
+	if (req.session.username !== undefined && req.session.userId !== undefined) {
+		redirectHome(res);
+	} else {
+		// If user is not logged in
+		callback();
+	}
+}
+
+// Send redirect to browser
+function sendRedirect(res, path) {
+	res.send({ redirect: path });
+}
+
+// Redirect to home page
+function redirectHome(res) {
+	res.redirect('/');
+}
