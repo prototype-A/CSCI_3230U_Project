@@ -40,15 +40,11 @@ app.use(session({
 
 
 // Main page
-app.get('/', (req, res) => {
-	let session = req.session;
-	let username = '';
-	if (session.username) {
-		username = session.username;
-	}
+const HOME_PATH = '/';
+app.get(HOME_PATH, (req, res) => {
 	res.render('index', {
 		title: 'Home',
-		username: username
+		username: getUsername(req)
 	});
 });
 
@@ -56,7 +52,7 @@ app.get('/', (req, res) => {
 // User registration page
 app.get('/register', (req, res) => {
 	// Check if user is already logged in
-	doIfNotLoggedIn(req, res, () => {
+	redirectIfLoggedIn(req, res, () => {
 		res.render('registration', {
 			title: 'Registration'
 		});
@@ -73,7 +69,7 @@ app.post('/register', (req, res) => {
 	
 	// Check username
 	if (req.body.username && req.body.username !== '') {
-		// TODO: Database check
+		//TODO: Database check
 		//let userExists = db.checkUserExists(usernameToCheck).then((result) => { return result; })
 		let userExists = false;
 		if (userExists) {
@@ -114,23 +110,24 @@ app.post('/register', (req, res) => {
 
 
 // User login page
-app.get('/login', (req, res) => {
+const LOGIN_PATH = '/login';
+app.get(LOGIN_PATH, (req, res) => {
 	// Check if user is already logged in
-	doIfNotLoggedIn(req, res, () => {
+	redirectIfLoggedIn(req, res, () => {
 		res.render('login', {
 			title: 'Log In'
 		});
 	});
 });
 // Validate user login info
-app.post('/login', (req, res) => {
-	// TODO: Database check
+app.post(LOGIN_PATH, (req, res) => {
+	//TODO: Database check
 	//req.session.userId = processLogin(req.body.username, req.body.password);
 	req.session.userId = 'userIdHash';
 	if (req.session.userId !== null) {
 		// Login successful
 		req.session.username = req.body.username;
-		sendRedirect(res, '/');
+		sendRedirect(res, HOME_PATH);
 	} else {
 		// Login unsuccessful
 		res.send({
@@ -142,10 +139,46 @@ app.post('/login', (req, res) => {
 
 // User logout
 app.get('/logout', (req, res) => {
-	req.session.userId = undefined;
 	req.session.username = undefined;
-	redirectHome(res);
+	req.session.userId = undefined;
+	redirectToHome(res);
 });
+
+
+// User profile
+app.get('/profile', (req, res) => {
+	// Check if user is logged in
+	redirectIfNotLoggedIn(req, res, () => {
+		//TODO: Database check
+		//let user = db.getUser(req.session.userId);
+		res.render('userProfile', {
+			title: 'Profile',
+			username: getUsername(req),
+			//username: user.username,
+			//dateJoined: user.joinDate
+		});
+	});
+});
+
+
+// Delete user
+app.post('/deleteUser', (req, res) => {
+	// Verify password first
+	//TODO: Delete user from database
+	//let deleteStatus = db.deleteUser(req.session.username, req.session.userId, req.body.password);
+	let deleteStatus = 0;
+	if (deleteStatus == 0) {
+		// Correct password entered; user deleted
+		sendRedirect(res, '/logout');
+	} else if (deleteStatus == -1) {
+		// Incorrect password
+		res.send({ message: 'Password incorrect' });
+	} else if (deleteStatus == -2) {
+		// Server-side error occurred when deleting user
+		res.send({ message: 'An error occurred when deleting the user' });
+	}
+});
+
 
 
 // Start Express listener on port
@@ -155,14 +188,35 @@ app.listen(app.get('port'), function() {
 });
 
 
-// Check if user is logged in
-function doIfNotLoggedIn(req, res, callback) {
+// Redirects to home page if user is logged in,
+// otherwise executes the callback function
+function redirectIfLoggedIn(req, res, callback) {
+	// Check if user is logged in
 	if (req.session.username !== undefined && req.session.userId !== undefined) {
-		redirectHome(res);
+		// User is logged in
+		redirectToHome(res);
 	} else {
-		// If user is not logged in
+		// User is not logged in
 		callback();
 	}
+}
+
+// Redirects to login page if user is not logged in,
+// otherwise executes the callback function
+function redirectIfNotLoggedIn(req, res, callback) {
+	// Check if user is logged in
+	if (req.session.username === undefined && req.session.userId === undefined) {
+		// User is not logged in
+		redirectToLogin(res);
+	} else {
+		// User is logged in
+		callback();
+	}
+}
+
+// Returns the currently logged in user's username
+function getUsername(req) {
+	return req.session.username;
 }
 
 // Send redirect to browser
@@ -170,7 +224,12 @@ function sendRedirect(res, path) {
 	res.send({ redirect: path });
 }
 
-// Redirect to home page
-function redirectHome(res) {
-	res.redirect('/');
+// Redirect browser to home page
+function redirectToHome(res) {
+	res.redirect(HOME_PATH);
+}
+
+// Redirect browser to login page
+function redirectToLogin(res) {
+	res.redirect(LOGIN_PATH);
 }

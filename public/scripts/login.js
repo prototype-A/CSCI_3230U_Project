@@ -29,7 +29,6 @@ window.onload = function() {
 				$('#errorMessage').text(res.errorMessage);
 			} else if (res.redirect) {
 				// Redirect
-				console.log('Redirecting');
 				window.location = res.redirect;
 			}
 			$('#loginBtn').removeClass('is-loading');

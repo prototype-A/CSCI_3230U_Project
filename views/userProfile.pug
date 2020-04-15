@@ -1,0 +1,58 @@
+doctype
+html(class="has-navbar-fixed-top has-background-white-ter")
+	head
+		title= title
+
+		// External dependency downloads
+		include includes/externalDependencies.pug
+
+		script(src="/public/scripts/profile.js",  
+			crossorigin="anonymous")
+
+		link(rel="stylesheet",
+			href="/public/styles/style.css")
+
+		// Top Navbar
+		include includes/navbar.pug
+
+	body
+		// Header
+		h1(class="title") User Profile
+		
+		div(class="columns is-centered")
+			// Info panel
+			div(class="input-panel column is-one-third has-background-grey-lighter")
+				// Username
+				div(class="columns")
+					div(class="profileInfoLabel column is-one-quarter") Username:
+					div(class="profileInfoText column is-two-thirds")= username
+					
+				hr(class="profileInfoDivider")
+				
+				// User created date
+				div(class="columns")
+					div(class="profileInfoLabel column is-one-quarter") Date Joined:
+					div(class="profileInfoText column is-two-thirds")= joinDate
+
+		// Hidden password input confirmation
+		div(class="columns is-centered" id="passwordConfirmation" style="display: none;")
+			div(class="column is-one-third")
+				// Label
+				div(class="title-small") Are you sure you want to delete your account?
+				
+				// Password input
+				div(class="field has-addons")
+					div(class="control has-icons-left is-expanded")
+						input(type="password", class="input is-dark", id="passwordField", name="password", placeholder="Enter your password")
+						span(class="icon is-small is-left")
+							i(class="fas fa-key")
+					// Addons
+					div(class="control")
+						// Toggle plaintext password button
+						button(type="button", class="button" id="showPasswordBtn") Show
+				// Password error message
+				div(class="errorMessage content columns is-centered" id="errorMessage")= errorMessage
+
+		// Delete
+		div(class="buttons is-centered")
+			button(type="button", class="button is-large is-danger", id="deleteUserBtn") Delete

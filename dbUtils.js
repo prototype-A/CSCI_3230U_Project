@@ -23,9 +23,13 @@ let userSchema = new Schema({
 		unique: true,
 		index: true
 	},
-	id: mongoose.Types.ObjectId,
+	joinDate: Date,
 	pwHash: String,
-	type: String
+	userId: {
+		type: mongoose.Types.ObjectId,
+		unique: true,
+		index: true
+	userType: String
 }, { collection: collections.USERS });
 let User = mongoose.model('user', userSchema);
 
@@ -43,14 +47,42 @@ function createUser(username, passwordText, userType) {
 	let newUser = new User({
 		username: username,
 		pwHash: passwordHash,
-		id: new mongoose.Types.ObjectId(),
-		type: userType
+		joinDate: Date.now(),
+		userId: new mongoose.Types.ObjectId(),
+		userType: userType
 	});
 	newUser.save((error) => {
 		if (error) {
 			console.error(`[ERROR] Failed to add user ${username} to collection ${collections.USERS} in database`);
 		} else {
 			console.log(`${username} added to users`);
+		}
+	});
+}
+
+
+// Delete user in db
+function deleteUser(username, userId, passwordText) {
+	User.find({
+		username: username,
+		userId: userId
+	}).then(function(result) {
+		if (result.length > 0 && bcrypt.compareSync(passwordText, users[0].pwHash)) {
+			// User found; deleting
+			User.remove({
+				username: username,
+				userId: userId,
+			}, (error) => {
+				if (error) {
+					console.error(`[ERROR] Failed to delete user ${username}`);
+					return -2;
+				} else {
+					return 0;
+				}
+			});
+		} else {
+			// Incorrect password
+			return -1;
 		}
 	});
 }
@@ -72,10 +104,26 @@ function processLogin(username, passwordText) {
 		username: username
 	}).then(function(result) {
 		if (result.length > 0 && bcrypt.compareSync(passwordText, users[0].pwHash)) {
-			// Login successful
-			return users[0].id;
+			// Login successful; return user ID to browser session
+			return users[0].userId;
 		} else {
 			// Login failed
+			return null;
+		}
+	});
+}
+
+
+// Find user object in db by userId
+function getUser(userId) {
+	User.find({
+		userId: userId
+	}).then(function(result) {
+		if (result.length > 0 && bcrypt.compareSync(passwordText, users[0].pwHash)) {
+			// User found
+			return users[0];
+		} else {
+			// User not found
 			return null;
 		}
 	});
