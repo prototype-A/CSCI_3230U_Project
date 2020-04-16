@@ -1,9 +1,10 @@
 let numItems = 20;
+let allItemsRegex = '.*';
 let items;
 
 $(document).ready(function() {
 	// Get items from server
-	queryItems(numItems, '');
+	queryItems(numItems, allItemsRegex);
 	
 	// Search button
 	$('#searchBtn').click(function() {
@@ -15,6 +16,23 @@ $(document).ready(function() {
 		closeModal($('#itemModal'));
 	});
 	$('#itemModalBackground').click(function() {
+		closeModal($('#itemModal'));
+	});
+	
+	// Item modal quantity input
+	$('#itemModalQuantityInput').on('input', function() {
+		let maxAmount = items[$(this).attr('item')].stockCount;
+		if ($('#itemModalQuantityInput').val() > maxAmount) {
+			$('#itemModalQuantityInput').val(maxAmount);
+		}
+		if ($('#itemModalQuantityInput').val() < 1) {
+			$('#itemModalQuantityInput').val(1);
+		}
+	});
+	
+	// 'Add to cart' button
+	$('#addToCartBtn').click(function() {
+		//TODO: Add item to cart
 		closeModal($('#itemModal'));
 	});
 	
@@ -38,13 +56,12 @@ $(document).ready(function() {
 // Search bar search function
 function search(e) {
 	if ((e.code === 'Enter' || e.code === 'NumpadEnter')) {
-		console.log('Searching for ' + $('#searchBar').val());
 		if ($('#searchBar').val() !== '') {
 			// Search for specific items
-			queryItems(numItems, $('#searchBar').val())
+			queryItems(numItems, `.*${$('#searchBar').val().toLowerCase()}*`)
 		} else {
 			// Empty search; get every item
-			queryItems(numItems, '')
+			queryItems(numItems, allItemsRegex)
 		}
 	}
 }
@@ -96,7 +113,7 @@ function populateItems(items) {
 		// Create a card for each item
 		$('#items')
 		.append($('<a>')
-			.attr('id', `item${i}`)
+			.attr('id', `${i}`)
 			.addClass('column')
 			.addClass('is-3')
 			.addClass('card')
@@ -113,6 +130,7 @@ function populateItems(items) {
 				.append($('<div>')
 					.addClass('card-content')
 					.append($('<div>')
+						.attr('id', `item${i}`)
 						.addClass('content')
 						.addClass('has-text-centered')
 						.append($('<div>')
@@ -134,17 +152,29 @@ function populateItems(items) {
 				)
 			).click(function() {
 				// Show item info (modal)
-				let itemNum = $(this).attr('id');
-				let item = items[parseInt(itemNum[itemNum.length - 1], 10)];
+				let item = items[parseInt($(this).attr('id'), 10)];
 				$('#itemModal').addClass('is-active');
 				$('#itemModalItemName').text(item.name);
 				$('#itemModalItemDesc').text(item.description);
 				$('#itemModalItemCondition').text(`Condition: ${item.itemCondition}`);
 				$('#itemModalItemStock').text((item.stockCount > 0) ? 'In Stock' : 'Out of Stock');
+				$('#itemModalQuantityLeftIndicator').text(`/ ${item.stockCount}`);
+				$('#itemModalQuantityInput').attr('item', $(this).attr('id'));
+				$('#itemModalQuantityInput').val(1);
 				
-				// Disable add to card button if item is out of stock
+				 // Item out of stock
 				if (item.stockCount == 0) {
-					$('#addToCardBtn').attr('disabled', true);
+					// Disable 'Add to cart' button
+					$('#addToCartBtn').attr('disabled', true);
+					
+					// Hide item quantity input
+					$('#itemModalQuantity').hide();
+				} else {
+					// Enable 'Add to cart' button
+					$('#addToCartBtn').removeAttr('disabled');
+					
+					// Show item quantity input
+					$('#itemModalQuantity').show();
 				}
 			})
 		);

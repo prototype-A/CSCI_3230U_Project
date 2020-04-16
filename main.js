@@ -216,7 +216,7 @@ app.post('/changeCurrency', (req, res) => {
 app.post('/getItems', (req, res) => {
 	db.Product.find({
 		name: {
-			$regex: `*${req.body.keyword}*`
+			$regex: new RegExp(req.body.keyword, 'i')
 		}
 	}).then(function(result) {
 		res.send(result);

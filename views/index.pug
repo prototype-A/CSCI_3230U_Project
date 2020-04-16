@@ -93,10 +93,19 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 								div(class="item-condition has-text-centered", id="itemModalItemCondition") Condition: New
 								p(class="item-modal-description" id="itemModalItemDesc") Item description
 								
-								// Item stock label and add to cart button
 								div(class="buttons is-centered align-bottom")
+									// Item in stock label
 									p(class="item-stock", id="itemModalItemStock") In Stock
-									button(type="button", class="button is-rounded is-large is-primary", id="addToCardBtn") Add to Cart
+
+									// Quantity selector
+									div(class="field has-addons" id="itemModalQuantity")
+										div(class="control is-expanded")
+											input(type="number", class="input", placeholder="Enter a quantity", id="itemModalQuantityInput", value=1)
+										div(class="control")
+											button(type="button", class="button is-static", id="itemModalQuantityLeftIndicator") / 1
+
+									// Add to cart button
+									button(type="button", class="button is-rounded is-large is-primary", id="addToCartBtn") Add to Cart
 
 				button(class="modal-close is-large" aria-label="close", id="closeItemModal")
 
