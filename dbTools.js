@@ -96,7 +96,7 @@ function deleteUser(username, userId, passwordText) {
 		username: username,
 		userId: userId
 	}).then(function(result) {
-		if (result.length > 0 && bcrypt.compareSync(passwordText, users[0].pwHash)) {
+		if (result.length > 0 && bcrypt.compareSync(passwordText, result[0].pwHash)) {
 			// User found; deleting
 			User.remove({
 				username: username,

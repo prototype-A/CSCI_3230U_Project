@@ -224,17 +224,29 @@ app.post('/getItems', (req, res) => {
 app.post('/deleteUser', (req, res) => {
 	// Verify password first
 	//TODO: Delete user from database
-	let deleteStatus = db.deleteUser(req.session.username, req.session.userId, req.body.password);
-	if (deleteStatus == 0) {
-		// Correct password entered; user deleted
-		sendRedirect(res, '/logout');
-	} else if (deleteStatus == -1) {
-		// Incorrect password
-		res.send({ message: 'Password incorrect' });
-	} else if (deleteStatus == -2) {
-		// Server-side error occurred when deleting user
-		res.send({ message: 'An error occurred when deleting the user' });
-	}
+	db.User.find({
+		username: req.session.username,
+		userId: req.session.userId
+	}).then(function(result) {
+		if (result.length > 0 && bcrypt.compareSync(req.body.password, result[0].pwHash)) {
+			// User found; deleting
+			db.User.remove({
+				username: req.session.username,
+				userId: req.session.userId,
+			}, (error) => {
+				if (error) {
+					console.error(`[ERROR] Failed to delete user ${req.session.username} (${req.session.userId})`);
+					res.send({ message: 'An error occurred when deleting the user' });
+				} else {
+					// Successfully deleted user; log out and redirect home
+					sendRedirect(res, '/logout');
+				}
+			});
+		} else {
+			// Incorrect password
+			res.send({ message: 'Password incorrect' });
+		}
+	});
 });
 
 
