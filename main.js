@@ -214,7 +214,11 @@ app.post('/changeCurrency', (req, res) => {
 
 // Send list of items to browser
 app.post('/getItems', (req, res) => {
-	db.Product.find({}).then(function(result) {
+	db.Product.find({
+		name: {
+			$regex: `*${req.body.keyword}*`
+		}
+	}).then(function(result) {
 		res.send(result);
 	});
 });

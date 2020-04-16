@@ -58,6 +58,9 @@ body {
 	border-radius: 5px;
 	padding: 1em 5em;
 }
+.filter-text {
+	padding-left: 0.5em;
+}
 
 /* Login/registration/profile page panel */
 .input-panel {

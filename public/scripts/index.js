@@ -1,4 +1,5 @@
 let numItems = 20;
+let items;
 
 $(document).ready(function() {
 	// Get items from server
@@ -16,6 +17,22 @@ $(document).ready(function() {
 	$('#itemModalBackground').click(function() {
 		closeModal($('#itemModal'));
 	});
+	
+	// Sort items by name alphabetically
+	$('#sortByNameAscending').click(function() {
+		if ($('#sortByNameAscending[name="sortByName"]').val()) {
+			// Sort A-Z
+			sortByName(items, true);
+			repopulateItems(items);
+		}
+	});
+	$('#sortByNameDescending').click(function() {
+		if ($('#sortByNameDescending[name="sortByName"]').val()) {
+			// Sort Z-A
+			sortByName(items, false);
+			repopulateItems(items);
+		}
+	});
 });
 
 // Search bar search function
@@ -32,6 +49,7 @@ function search(e) {
 	}
 }
 
+// Closes item modal
 function closeModal(modal) {
 	modal.removeClass('is-active');
 }
@@ -44,10 +62,29 @@ function queryItems(numItemsToGet, searchTerm) {
 	// Get items
 	$.post('/getItems', {
 		amount: numItemsToGet,
-		search: searchTerm
+		keyword: searchTerm
 	}, function(res) {
-		populateItems(res);
+		items = res;
+		sortByName(items, true);
+		populateItems(items);
 	});
+}
+
+// Sorting
+function sortByName(items, ascending) {
+	items.sort(function(item1, item2) {
+		return sortItemsByString(item1.name, item2.name, ascending);
+	});
+}
+function sortItemsByString(item1, item2, ascending) {
+	let a = item1;
+	let b = item2;
+	
+	if (ascending) {
+		return (a < b) ? -1 : (a > b) ? 1 : 0;
+	}
+	
+	return (a < b) ? 1 : (a > b) ? -1 : 0;
 }
 
 // Create items on screen
@@ -127,4 +164,8 @@ function populateItems(items) {
 			.text(`${itemShippingCost} Shipping`)
 		)
 	}
+}
+function repopulateItems(items) {
+	$('#items').empty();
+	populateItems(items);
 }

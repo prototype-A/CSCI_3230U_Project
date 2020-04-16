@@ -42,6 +42,11 @@ nav(class="navbar is-fixed-top", role="navigation" aria-label="dropdown navigati
 					+currencyDropdownItem("EUR", "fa-euro-sign", "eurSelector")
 					+currencyDropdownItem("GBP", "fa-pound-sign", "gbpSelector")
 			
+			// Shopping cart
+			a(href="/cart", class="navbar-item" id="shoppingCartBtn")
+				img(class="currency-icon fas fa-shopping-cart")
+				p(class="is-centered currency-text") Your Cart
+			
 			if (username)
 				div(class="navbar-item navbar-greeting") Hello,
 				

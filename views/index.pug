@@ -4,6 +4,14 @@ mixin checkboxFilter(text, id)
 			input(type="checkbox", id=id)
 			p= text
 
+mixin radioFilter(text, id, group, checked)
+	label(class="panel-block")
+		if (checked)
+			input(type="radio", id=id, name=group, checked="true")
+		else
+			input(type="radio", id=id, name=group)
+		span(class="filter-text")= text
+
 doctype
 html(class="has-navbar-fixed-top has-background-white-ter")
 	head
@@ -35,11 +43,10 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 		div(class="columns items")
 			div(class="column is-2 filter-panel")
 				aside(class="menu")
-					p(class="menu-label") Filters
-					ul(class="menu-list")
-						+checkboxFilter("A")
-						+checkboxFilter("B")
-						+checkboxFilter("C")
+					p(class="menu-label") Sort Alphabetically
+					div(class="control")
+						+radioFilter("A-Z", "sortByNameAscending", "sortByName", true)
+						+radioFilter("Z-A", "sortByNameDescending", "sortByName")
 
 			// Items
 			div(class="column is-10 columns is-multiline", id="items")
