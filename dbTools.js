@@ -54,7 +54,9 @@ let productSchema = new Schema({
 		unique: true,
 		index: true
 	},
+	description: String,
 	itemCondition: String,
+	stockCount: Number,
 	price: Number,
 	taxIncluded: Boolean,
 	shippingPrice: Number
@@ -158,11 +160,13 @@ function getUser(userId) {
 
 
 // Create product
-function createProduct(name, condition, price, taxIncluded, shippingPrice) {
+function createProduct(name, description, condition, amount, price, taxIncluded, shippingPrice) {
 	let newProduct = new Product({
 		name: name,
-		itemCondition: condition,
 		productId: new mongoose.Types.ObjectId(),
+		description: description,
+		itemCondition: condition,
+		stockCount: amount,
 		price: price,
 		taxIncluded: taxIncluded,
 		shippingPrice: shippingPrice

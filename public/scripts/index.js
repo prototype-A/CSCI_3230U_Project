@@ -1,13 +1,21 @@
 let numItems = 20;
 
 $(document).ready(function() {
+	// Get items from server
+	queryItems(numItems, '');
+	
 	// Search button
 	$('#searchBtn').click(function() {
 		search({ code: 'Enter' });
 	});
 	
-	// Get items from server
-	queryItems(numItems, '');
+	// Close item modal
+	$('#closeItemModal').click(function() {
+		closeModal($('#itemModal'));
+	});
+	$('#itemModalBackground').click(function() {
+		closeModal($('#itemModal'));
+	});
 });
 
 // Search bar search function
@@ -22,6 +30,10 @@ function search(e) {
 			queryItems(numItems, '')
 		}
 	}
+}
+
+function closeModal(modal) {
+	modal.removeClass('is-active');
 }
 
 // Get items from server
@@ -43,12 +55,13 @@ function populateItems(items) {
 	for (let i = 0; i < items.length; i++) {
 		// Shipping cost text
 		let itemShippingCost = (items[i].shippingPrice == 0) ? 'Free' : `$${items[i].shippingPrice.toFixed(2)}`;
-
+		
 		// Create a card for each item
 		$('#items')
 		.append($('<a>')
+			.attr('id', `item${i}`)
 			.addClass('column')
-			.addClass('is-one-fifth')
+			.addClass('is-3')
 			.addClass('card')
 			.append($('<div>')
 				// Item image
@@ -65,16 +78,15 @@ function populateItems(items) {
 					.append($('<div>')
 						.addClass('content')
 						.addClass('has-text-centered')
-						.attr('id', `item${i}`)
 						.append($('<div>')
 							// Item name
 							.addClass('title')
 							.text(items[i].name)
 						)
 						.append($('<div>')
-							// Item condition
-							.addClass('item-condition')
-							.text(`Condition: ${items[i].itemCondition}`)
+							// Item in stock
+							.addClass('item-stock')
+							.text((items[i].stockCount > 0) ? 'In Stock' : 'Out of Stock')
 						)
 						.append($('<span>')
 							// Item price
@@ -83,7 +95,21 @@ function populateItems(items) {
 						)
 					)
 				)
-			)
+			).click(function() {
+				// Show item info (modal)
+				let itemNum = $(this).attr('id');
+				let item = items[parseInt(itemNum[itemNum.length - 1], 10)];
+				$('#itemModal').addClass('is-active');
+				$('#itemModalItemName').text(item.name);
+				$('#itemModalItemDesc').text(item.description);
+				$('#itemModalItemCondition').text(`Condition: ${item.itemCondition}`);
+				$('#itemModalItemStock').text((item.stockCount > 0) ? 'In Stock' : 'Out of Stock');
+				
+				// Disable add to card button if item is out of stock
+				if (item.stockCount == 0) {
+					$('#addToCardBtn').attr('disabled', true);
+				}
+			})
 		);
 		if (!items[i].taxIncluded) {
 			// Tax not included in item price

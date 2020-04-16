@@ -1,3 +1,8 @@
+.align-bottom {
+	bottom: 2em;
+	position: absolute;
+}
+
 body {
 	margin-top: 5em;
 }
@@ -9,7 +14,8 @@ body {
 
 /* Items */
 .card {
-	margin: 1em 1em;
+	margin: 1em 0.5em;
+	width: 23.5em !important;
 }
 .items {
 	margin-top: 5em;
@@ -18,6 +24,12 @@ body {
 	border-radius: 30px;
 	border-style: solid;
 	margin: 1em 2em;
+}
+.item-stock {
+	margin: 1em 2em;
+}
+.item-modal-description {
+	margin: 3em auto;
 }
 .tax {
 	margin-left: 0.2em;
@@ -119,6 +131,10 @@ a.navbar-item {
 /* Headers */
 .title {
 	font-size: 4em;
+	text-align: center;
+}
+.title-smaller {
+	font-size: 2.5em;
 	text-align: center;
 }
 .title-small {
