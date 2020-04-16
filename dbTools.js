@@ -1,22 +1,30 @@
 const dbUrl =  'mongodb://localhost:27017/CSCI_3230U_Project';
 console.log('Connecting to MongoDB at: ' + dbUrl);
 
+const collections = {
+	PRODUCTS: 'products',
+	USERS: 'users'
+}
+
 const userType = {
 	ADMIN: 'admin',
 	USER: 'user'
 }
 
-const collections = {
-	USERS: 'users'
+const itemCondition = {
+	NEW: 'New',
+	USED: 'Used',
+	REFURBISHED: 'Refurbished',
+	DAMAGED: 'Damaged'
 }
-
 
 // MongoDB
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect(dbUrl, { useNewUrlParser: true });
-
 let Schema = mongoose.Schema;
+
+// Users
 let userSchema = new Schema({
 	username: {
 		type: String,
@@ -29,10 +37,29 @@ let userSchema = new Schema({
 		type: mongoose.Types.ObjectId,
 		unique: true,
 		index: true
+	},
 	userType: String
 }, { collection: collections.USERS });
 let User = mongoose.model('user', userSchema);
 
+// Products
+let productSchema = new Schema({
+	name: {
+		type: String,
+		unique: true,
+		index: true
+	},
+	productId: {
+		type: mongoose.Types.ObjectId,
+		unique: true,
+		index: true
+	},
+	itemCondition: String,
+	price: Number,
+	taxIncluded: Boolean,
+	shippingPrice: Number
+}, { collection: collections.PRODUCTS });
+let Product = mongoose.model('product', productSchema);
 
 // Hashing
 const bcrypt = require('bcrypt');
@@ -55,7 +82,7 @@ function createUser(username, passwordText, userType) {
 		if (error) {
 			console.error(`[ERROR] Failed to add user ${username} to collection ${collections.USERS} in database`);
 		} else {
-			console.log(`${username} added to users`);
+			console.log(`${username} added to ${collections.USERS}`);
 		}
 	});
 }
@@ -103,9 +130,9 @@ function processLogin(username, passwordText) {
 	User.find({
 		username: username
 	}).then(function(result) {
-		if (result.length > 0 && bcrypt.compareSync(passwordText, users[0].pwHash)) {
+		if (result.length > 0 && bcrypt.compareSync(passwordText, result[0].pwHash)) {
 			// Login successful; return user ID to browser session
-			return users[0].userId;
+			return result[0].userId;
 		} else {
 			// Login failed
 			return null;
@@ -119,12 +146,32 @@ function getUser(userId) {
 	User.find({
 		userId: userId
 	}).then(function(result) {
-		if (result.length > 0 && bcrypt.compareSync(passwordText, users[0].pwHash)) {
+		if (result.length > 0 && bcrypt.compareSync(passwordText, result[0].pwHash)) {
 			// User found
-			return users[0];
+			return result[0];
 		} else {
 			// User not found
 			return null;
+		}
+	});
+}
+
+
+// Create product
+function createProduct(name, condition, price, taxIncluded, shippingPrice) {
+	let newProduct = new Product({
+		name: name,
+		itemCondition: condition,
+		productId: new mongoose.Types.ObjectId(),
+		price: price,
+		taxIncluded: taxIncluded,
+		shippingPrice: shippingPrice
+	});
+	newProduct.save((error) => {
+		if (error) {
+			console.error(`[ERROR] Failed to add product ${name} to collection ${collections.PRODUCTS} in database`);
+		} else {
+			console.log(`${name} added to ${collections.PRODUCTS}`);
 		}
 	});
 }
@@ -135,6 +182,13 @@ module.exports = {
 	collections,
 	dbUrl,
 	User,
-	userSchema,
-	userType
+	userType,
+	Product,
+	itemCondition,
+	createUser,
+	deleteUser,
+	checkUserExists,
+	processLogin,
+	getUser,
+	createProduct
 }

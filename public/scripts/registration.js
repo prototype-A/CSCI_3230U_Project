@@ -65,9 +65,9 @@ window.onload = function() {
 				if (res.passwordResult === 'rejected') {
 					passwordRejected(res.passwordErrorMessage);
 				}
-			} else {
-				// Username and password accepted
-				console.log('Registration success');
+			} else if (res.redirect) {
+				// Username and password accepted; redirect to homepage
+				window.location = res.redirect;
 			}
 			$('#registerBtn').removeClass('is-loading');
 		});

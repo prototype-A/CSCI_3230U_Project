@@ -21,7 +21,7 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 		
 		div(class="columns is-centered")
 			// Info panel
-			div(class="input-panel column is-one-third has-background-grey-lighter")
+			div(class="input-panel column is-half has-background-grey-lighter")
 				// Username
 				div(class="columns")
 					div(class="profile-info-label column is-one-quarter") Username:
@@ -32,7 +32,7 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 				// User created date
 				div(class="columns")
 					div(class="profile-info-label column is-one-quarter") Date Joined:
-					div(class="profile-info-text column is-two-thirds")= joinDate
+					div(class="profile-info-text column is-two-thirds")= dateJoined
 
 		// Hidden password input confirmation
 		div(class="columns is-centered" id="passwordConfirmation" style="display: none;")

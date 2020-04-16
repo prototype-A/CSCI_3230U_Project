@@ -1,4 +1,4 @@
-window.onload = function() {
+$(document).ready(function() {
 	// Select CAD
 	$('#cadSelector').click(function() {
 		$.post('/changeCurrency', {
@@ -38,4 +38,4 @@ window.onload = function() {
 		$('#currentCurrencyIcon').removeClass('fa-euro-sign fa-dollar-sign');
 		$('#currentCurrencyIcon').addClass('fa-pound-sign');
 	});
-}
+});

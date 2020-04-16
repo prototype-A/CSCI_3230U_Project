@@ -8,15 +8,14 @@ let uuid = require('uuid/v1');
 
 
 // MongoDB
-/*
-let assert = require('assert');
-let bcrypt = require('bcrypt');
-let db = require('./dbUtils.js');
+let db = require('./dbTools.js');
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect(db.dbUrl, { useNewUrlParser: true });
-*/
-
+let assert = require('assert');
+let bcrypt = require('bcrypt');
+const saltRounds = 10;
+const salt = bcrypt.genSaltSync(saltRounds);
 
 // Middleware
 app.use('/public', express.static('public'));
@@ -73,46 +72,76 @@ app.post('/register', (req, res) => {
 	}
 	
 	// Check username
-	if (req.body.username && req.body.username !== '') {
-		//TODO: Database check
-		//let userExists = db.checkUserExists(usernameToCheck).then((result) => { return result; })
-		let userExists = false;
-		if (userExists) {
-			// User with username already exists
-			response.usernameErrorMessage = 'Username is taken';
-			response.usernameResult = 'rejected';
-		} else {
-			// Username is available
-			response.usernameResult = 'accepted';
-		}
+	if (req.body.username !== '' && req.body.username !== undefined) {
+		db.User.find({
+			username: req.body.username
+		}).then(function(result) {
+			if (result.length > 0) {
+				// User with username already exists
+				response.usernameErrorMessage = 'Username is taken';
+				response.usernameResult = 'rejected';
+			} else {
+				// Username is available
+				response.usernameResult = 'accepted';
+			}
+
+			// Check password
+			if (req.body.password !== '' && req.body.password !== undefined) {
+				let capitalCheck = new RegExp('([A-Z])+');
+				let numberCheck = new RegExp('([0-9])+');
+				let passwordPassed = req.body.password.length >= 8 && capitalCheck.test(req.body.password) && numberCheck.test(req.body.password);
+				if (passwordPassed) {
+					// Password check passed
+					response.passwordResult = 'accepted';
+				} else {
+					// Password does not meet requirements
+					response.passwordErrorMessage = 'Password must contain: 1 capital letter, 1 number, and be at least 8 characters in length';
+					response.passwordResult = 'rejected';
+				}
+			} else {
+				// No password entered
+				response.passwordErrorMessage = 'Password must contain: 1 capital letter, 1 number, and be at least 8 characters in length';
+				response.passwordResult = 'rejected';
+			}
+			
+			if (response.usernameResult === response.passwordResult && response.usernameResult === 'accepted') {
+				// Username and password passed; create user
+				let passwordHash = bcrypt.hashSync(req.body.password, salt);
+				let userId = new mongoose.Types.ObjectId();
+
+				let newUser = new db.User({
+					username: req.body.username,
+					pwHash: passwordHash,
+					joinDate: Date.now(),
+					userId: userId,
+					userType: db.userType.USER
+				});
+				newUser.save((error) => {
+					if (error) {
+						console.error(`[ERROR] Failed to add user ${req.body.username} to collection ${db.collections.USERS} in database`);
+					} else {
+						console.log(`${req.body.username} added to ${collections.USERS}`);
+					}
+				});
+				
+				// Log in to user
+				req.session.username = req.body.username;
+				req.session.userId = userId;
+				
+				sendRedirect(res, '/');
+			} else {
+				// Send errors back to browser
+				res.send(response);
+			}
+		});
 	} else {
 		// No username entered
 		response.usernameErrorMessage = 'Please enter a username';
 		response.usernameResult = 'rejected';
-	}
-	// Check password
-	if (req.body.password && req.body.password !== '') {
-		let capitalCheck = new RegExp('([A-Z])+');
-		let numberCheck = new RegExp('([0-9])+');
-		let passwordPassed = req.body.password.length >= 8 && capitalCheck.test(req.body.password) && numberCheck.test(req.body.password);
-		if (passwordPassed) {
-			// Password check passed
-			passwordResult = 'accepted';
-		} else {
-			// Password does not meet requirements
-			response.passwordErrorMessage = 'Password must contain: 1 capital letter, 1 number, and be at least 8 characters in length';
-			response.passwordResult = 'rejected';
-		}
-	} else {
-		// No password entered
-		response.passwordErrorMessage = 'Password must contain: 1 capital letter, 1 number, and be at least 8 characters in length';
-		response.passwordResult = 'rejected';
-	}
-	
-	// Send response to browser
-	res.send(response);
-});
 
+		res.send(response);
+	}
+});
 
 // User login page
 const LOGIN_PATH = '/login';
@@ -127,19 +156,22 @@ app.get(LOGIN_PATH, (req, res) => {
 });
 // Validate user login info
 app.post(LOGIN_PATH, (req, res) => {
-	//TODO: Database check
-	//req.session.userId = processLogin(req.body.username, req.body.password);
-	req.session.userId = 'userIdHash';
-	if (req.session.userId !== null) {
-		// Login successful
-		req.session.username = req.body.username;
-		sendRedirect(res, HOME_PATH);
-	} else {
-		// Login unsuccessful
-		res.send({
-			errorMessage: 'Username and password combination not found'
-		});
-	}
+	db.User.find({
+		username: req.body.username
+	}).then(function(result) {
+		if (result.length > 0 && bcrypt.compareSync(req.body.password, result[0].pwHash)) {
+			// Login successful; return user ID to browser session
+			req.session.userId = result[0].userId;
+			req.session.username = result[0].username;
+			sendRedirect(res, HOME_PATH);
+		} else {
+			// Login unsuccessful
+			res.send({
+				errorMessage: 'Username and password combination not found'
+			});
+		}
+	});
+	
 });
 
 
@@ -155,14 +187,19 @@ app.get('/logout', (req, res) => {
 app.get('/profile', (req, res) => {
 	// Check if user is logged in
 	redirectIfNotLoggedIn(req, res, () => {
-		//TODO: Database check
-		//let user = db.getUser(req.session.userId);
-		res.render('userProfile', {
-			title: 'Profile',
-			username: getUsername(req),
-			currency: req.session.currency
-			//username: user.username,
-			//dateJoined: user.joinDate
+		db.User.find({
+			userId: req.session.userId
+		}).then(function(result) {
+			if (result.length > 0) {
+				// User found
+				let user = result[0];
+				res.render('userProfile', {
+					title: 'Profile',
+					currency: req.session.currency,
+					username: user.username,
+					dateJoined: user.joinDate.toString()
+				});
+			}
 		});
 	});
 });
@@ -177,59 +214,9 @@ app.post('/changeCurrency', (req, res) => {
 
 // Send list of items to browser
 app.post('/getItems', (req, res) => {
-	//TODO: Retrieve from database
-	let items = [
-		{
-			name: 'Item 1',
-			condition: 'Good',
-			price: 249.99,
-			taxIncluded: false,
-			shippingPrice: 0.99
-		},
-		{
-			name: 'Item 2',
-			condition: 'Good',
-			price: 500.00,
-			taxIncluded: true,
-			shippingPrice: 0.00
-		},
-		{
-			name: 'Item 3',
-			condition: 'Good',
-			price: 5.00,
-			taxIncluded: false,
-			shippingPrice: 3.99
-		},
-		{
-			name: 'Item 4',
-			condition: 'Good',
-			price: 999.99,
-			taxIncluded: false,
-			shippingPrice: 0.00
-		},
-		{
-			name: 'Item 5',
-			condition: 'Bad',
-			price: 1234567.89,
-			taxIncluded: false,
-			shippingPrice: 9.99
-		},
-		{
-			name: 'Item 5',
-			condition: 'Good',
-			price: 1234567.89,
-			taxIncluded: true,
-			shippingPrice: 9.99
-		},
-		{
-			name: 'Item 5',
-			condition: 'Good',
-			price: 1234567.89,
-			taxIncluded: true,
-			shippingPrice: 9.99
-		},
-	]
-	res.send(items);
+	db.Product.find({}).then(function(result) {
+		res.send(result);
+	});
 });
 
 
@@ -237,8 +224,7 @@ app.post('/getItems', (req, res) => {
 app.post('/deleteUser', (req, res) => {
 	// Verify password first
 	//TODO: Delete user from database
-	//let deleteStatus = db.deleteUser(req.session.username, req.session.userId, req.body.password);
-	let deleteStatus = 0;
+	let deleteStatus = db.deleteUser(req.session.username, req.session.userId, req.body.password);
 	if (deleteStatus == 0) {
 		// Correct password entered; user deleted
 		sendRedirect(res, '/logout');

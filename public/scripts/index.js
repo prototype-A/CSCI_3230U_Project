@@ -48,7 +48,7 @@ function populateItems(items) {
 		$('#items')
 		.append($('<a>')
 			.addClass('column')
-			.addClass('is-2')
+			.addClass('is-one-fifth')
 			.addClass('card')
 			.append($('<div>')
 				// Item image
@@ -74,7 +74,7 @@ function populateItems(items) {
 						.append($('<div>')
 							// Item condition
 							.addClass('item-condition')
-							.text(`Condition: ${items[i].condition}`)
+							.text(`Condition: ${items[i].itemCondition}`)
 						)
 						.append($('<span>')
 							// Item price

@@ -50,7 +50,7 @@ body {
 /* Login/registration/profile page panel */
 .input-panel {
 	border-radius: 5px;
-	margin: 6em;
+	margin: 6em 2em;
 	padding: 1em 2.5em 2em 2.5em;
 }
 
@@ -105,8 +105,9 @@ a.navbar-item {
 	font-weight: bold;
 	text-align: right;
 }
-.profileI-info-text {
-	font-size: 1.8em;
+.profile-info-text {
+	font-size: 1.2em;
+	padding-top: 1.1em;
 }
 
 /* Search bar */
