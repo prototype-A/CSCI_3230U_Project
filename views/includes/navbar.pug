@@ -1,19 +1,58 @@
+// Navbar script
+script(src="/public/scripts/navbar.js",  
+	crossorigin="anonymous")
+
+// Current currency
+mixin currencyDisplay(text, icon)
+	img(class="current-currency-icon fas " + icon, id="currentCurrencyIcon")
+	p(class="is-centered currency-text" id="currentCurrencyText")= text
+
+// Dropdown item
+mixin currencyDropdownItem(text, icon, id)
+	a(class="navbar-item navbar-dropdown-item" id=id)
+		img(class="currency-icon fas " + icon)
+		p(class="is-centered currency-text")= text
+
 // Top Navbar
 nav(class="navbar is-fixed-top", role="navigation" aria-label="dropdown navigation")
 	// Left side of navbar
 	div(class="navbar-brand")
-		a(href="/", class="navbar-item") Home
 
-	// Right side of navbar
 	div(class="navbar-menu")
+		a(href="/", class="navbar-item navbar-home is-centered") Home
+	
+		// Right side of navbar
 		div(class="navbar-end")
+			// Currency selector dropdown
+			div(class="navbar-item has-dropdown is-hoverable")
+				a(class="navbar-link")
+					if (currency == "USD")
+						+currencyDisplay("USD", "fa-dollar-sign")
+					else if (currency == "EUR")
+						+currencyDisplay("EUR", "fa-euro-sign")
+					else if (currency == "GBP")
+						+currencyDisplay("GBP", "fa-pound-sign")
+					else
+						// Default to CAD
+						+currencyDisplay("CAD", "fa-dollar-sign")
+					
+				div(class="navbar-dropdown is-right is-boxed", id="currencyDropdown")
+					+currencyDropdownItem("CAD", "fa-dollar-sign", "cadSelector")
+					+currencyDropdownItem("USD", "fa-dollar-sign", "usdSelector")
+					+currencyDropdownItem("EUR", "fa-euro-sign", "eurSelector")
+					+currencyDropdownItem("GBP", "fa-pound-sign", "gbpSelector")
+			
 			if (username)
-				div(class="navbar-item") Hello,
+				div(class="navbar-item navbar-greeting") Hello,
+				
+				// Username with dropdown
 				div(class="navbar-item has-dropdown is-hoverable")
 					a(class="navbar-link", id="username")= username
-					div(class="navbar-dropdown")
-						a(href="/profile", class="navbar-item") Profile
+					
+					// Dropdown
+					div(class="navbar-dropdown is-right is-boxed")
+						a(href="/profile", class="navbar-item navbar-dropdown-item") Profile
 						hr(class="navbar-divider")
-						a(href="/logout", class="navbar-item") Log out
+						a(href="/logout", class="navbar-item navbar-dropdown-item") Log out
 			else
-				a(href="/login", class="navbar-item") Login
+				a(href="/login", class="navbar-item") Log In

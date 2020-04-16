@@ -34,7 +34,10 @@ app.use(session({
 	genid: (request) => { return uuid(); },
 	resave: false,
 	saveUninitialized: false,
-	//cookie: { secure: true },
+	cookie: {
+		//secure: true,
+		httpOnly: false
+	},
 	secret: 'subcommissaries nonnavigable preamplifier denominator pseudocultural'
 }));
 
@@ -44,7 +47,8 @@ const HOME_PATH = '/';
 app.get(HOME_PATH, (req, res) => {
 	res.render('index', {
 		title: 'Home',
-		username: getUsername(req)
+		username: getUsername(req),
+		currency: req.session.currency
 	});
 });
 
@@ -54,7 +58,8 @@ app.get('/register', (req, res) => {
 	// Check if user is already logged in
 	redirectIfLoggedIn(req, res, () => {
 		res.render('registration', {
-			title: 'Registration'
+			title: 'Registration',
+			currency: req.session.currency
 		});
 	});
 });
@@ -115,7 +120,8 @@ app.get(LOGIN_PATH, (req, res) => {
 	// Check if user is already logged in
 	redirectIfLoggedIn(req, res, () => {
 		res.render('login', {
-			title: 'Log In'
+			title: 'Log In',
+			currency: req.session.currency
 		});
 	});
 });
@@ -154,10 +160,76 @@ app.get('/profile', (req, res) => {
 		res.render('userProfile', {
 			title: 'Profile',
 			username: getUsername(req),
+			currency: req.session.currency
 			//username: user.username,
 			//dateJoined: user.joinDate
 		});
 	});
+});
+
+
+// Persist browser currency change
+app.post('/changeCurrency', (req, res) => {
+	req.session.currency = req.body.currency;
+	res.end();
+});
+
+
+// Send list of items to browser
+app.post('/getItems', (req, res) => {
+	//TODO: Retrieve from database
+	let items = [
+		{
+			name: 'Item 1',
+			condition: 'Good',
+			price: 249.99,
+			taxIncluded: false,
+			shippingPrice: 0.99
+		},
+		{
+			name: 'Item 2',
+			condition: 'Good',
+			price: 500.00,
+			taxIncluded: true,
+			shippingPrice: 0.00
+		},
+		{
+			name: 'Item 3',
+			condition: 'Good',
+			price: 5.00,
+			taxIncluded: false,
+			shippingPrice: 3.99
+		},
+		{
+			name: 'Item 4',
+			condition: 'Good',
+			price: 999.99,
+			taxIncluded: false,
+			shippingPrice: 0.00
+		},
+		{
+			name: 'Item 5',
+			condition: 'Bad',
+			price: 1234567.89,
+			taxIncluded: false,
+			shippingPrice: 9.99
+		},
+		{
+			name: 'Item 5',
+			condition: 'Good',
+			price: 1234567.89,
+			taxIncluded: true,
+			shippingPrice: 9.99
+		},
+		{
+			name: 'Item 5',
+			condition: 'Good',
+			price: 1234567.89,
+			taxIncluded: true,
+			shippingPrice: 9.99
+		},
+	]
+	res.send(items);
 });
 
 
@@ -178,7 +250,6 @@ app.post('/deleteUser', (req, res) => {
 		res.send({ message: 'An error occurred when deleting the user' });
 	}
 });
-
 
 
 // Start Express listener on port

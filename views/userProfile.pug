@@ -9,8 +9,8 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 		script(src="/public/scripts/profile.js",  
 			crossorigin="anonymous")
 
-		link(rel="stylesheet",
-			href="/public/styles/style.css")
+		// Local dependencies
+		include includes/localDependencies.pug
 
 		// Top Navbar
 		include includes/navbar.pug
@@ -24,15 +24,15 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 			div(class="input-panel column is-one-third has-background-grey-lighter")
 				// Username
 				div(class="columns")
-					div(class="profileInfoLabel column is-one-quarter") Username:
-					div(class="profileInfoText column is-two-thirds")= username
+					div(class="profile-info-label column is-one-quarter") Username:
+					div(class="profile-info-text column is-two-thirds")= username
 					
-				hr(class="profileInfoDivider")
+				hr(class="profile-info-divider")
 				
 				// User created date
 				div(class="columns")
-					div(class="profileInfoLabel column is-one-quarter") Date Joined:
-					div(class="profileInfoText column is-two-thirds")= joinDate
+					div(class="profile-info-label column is-one-quarter") Date Joined:
+					div(class="profile-info-text column is-two-thirds")= joinDate
 
 		// Hidden password input confirmation
 		div(class="columns is-centered" id="passwordConfirmation" style="display: none;")
@@ -51,7 +51,7 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 						// Toggle plaintext password button
 						button(type="button", class="button" id="showPasswordBtn") Show
 				// Password error message
-				div(class="errorMessage content columns is-centered" id="errorMessage")= errorMessage
+				div(class="error-message content columns is-centered" id="errorMessage")= errorMessage
 
 		// Delete
 		div(class="buttons is-centered")

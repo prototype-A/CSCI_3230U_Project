@@ -6,11 +6,11 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 		// External dependency downloads
 		include includes/externalDependencies.pug
 
+		// Local dependencies
+		include includes/localDependencies.pug
+		
 		script(src="/public/scripts/registration.js",  
 			crossorigin="anonymous")
-
-		link(rel="stylesheet",
-			href="/public/styles/style.css")
 
 		// Top Navbar
 		include includes/navbar.pug
@@ -30,7 +30,7 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 						span(class="icon is-small is-left")
 							i(class="fas fa-address-card")
 				// Username error message
-				div(class="errorMessage content columns is-centered" id="usernameErrorMessage")= usernameErrorMessage
+				div(class="error-message content columns is-centered" id="usernameErrorMessage")= usernameErrorMessage
 				
 				// Password input
 				label(class="label", for="password") Password:
@@ -44,7 +44,7 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 						// Toggle plaintext password button
 						button(type="button", class="button" id="showPasswordBtn") Show
 				// Password error message
-				div(class="errorMessage content columns is-centered" id="passwordErrorMessage")= passwordErrorMessage
+				div(class="error-message content columns is-centered" id="passwordErrorMessage")= passwordErrorMessage
 				
 				// Register button
 				div(class="buttons is-centered")

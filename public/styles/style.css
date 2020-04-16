@@ -1,18 +1,50 @@
+body {
+	margin-top: 5em;
+}
+
 /* Login/registration page button container */
 .buttons {
 	margin: 3em;
 }
 
+/* Items */
+.card {
+	margin: 1em 1em;
+}
+.items {
+	margin-top: 5em;
+}
+.item-condition {
+	border-radius: 30px;
+	border-style: solid;
+	margin: 1em 2em;
+}
+.tax {
+	margin-left: 0.2em;
+	text-align: center;
+	vertical-align: 80%;
+}
+.price {
+	font-size: 3em;
+	font-weight: bold;
+	margin: 0 !important;
+	text-align: center;
+}
+.price-small {
+	font-size: 1.2em;
+	text-align: center;
+}
+
 /* Login/registration page error messages */
-.errorMessage {
+.error-message {
 	margin-top: 1em;
 	color: red;
 }
 
-/* Login/registration page input field labels */
-.label {
-	margin-top: 1em;
-	font-size: 1.8em;
+/* Item filter panel */
+.filter-panel {
+	border-radius: 5px;
+	padding: 1em 5em;
 }
 
 /* Login/registration/profile page panel */
@@ -22,32 +54,72 @@
 	padding: 1em 2.5em 2em 2.5em;
 }
 
-/* Profile page divider */
-.profileInfoDivider {
+/* Login/registration page input field labels */
+.label {
+	margin-top: 1em;
+	font-size: 1.8em;
+}
+
+/* Navbar and navbar items */
+.navbar {
+	height: 5em;
+}
+.navbar-item {
+	padding: 1em 1.5em;
+}
+a.navbar-item {
+	font-size: 1.5em;
+}
+.navbar-dropdown-item {
+	font-size: 1em;
+}
+.navbar-greeting {
+	font-size: 1.5em;
+	padding-right: 0.5em;
+	text-align: right;
+}
+.navbar-home {
+	padding: 1em 3em;
+}
+.navbar-link {
+	font-size: 1.5em;
+}
+.current-currency-icon {
+	margin-right: 0.5em;
+}
+.currency-icon {
+	margin-left: 0.2em;
+	margin-right: 1em;
+}
+.currency-text {
+	margin: auto;
+}
+
+/* Profile page */
+.profile-info-divider {
 	margin: 0 0 1em 0;
 	padding: 0;
 }
-
-/* Profile page user info label */
-.profileInfoLabel {
+.profile-info-label {
 	font-size: 1.8em;
 	font-weight: bold;
 	text-align: right;
 }
-
-/* Profile page user info text */
-.profileInfoText {
+.profileI-info-text {
 	font-size: 1.8em;
 }
 
-/* Header */
-.title {
-	font-size: 4em;
-	margin-top: 1.5em;
-	text-align: center;
+/* Search bar */
+.search-bar {
+	margin: 5em auto;
+	width: 60%;
 }
 
-/* Smaller header */
+/* Headers */
+.title {
+	font-size: 4em;
+	text-align: center;
+}
 .title-small {
 	font-size: 1.5em;
 	margin: 1em;

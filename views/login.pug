@@ -6,11 +6,11 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 		// External dependency downloads
 		include includes/externalDependencies.pug
 
+		// Local dependencies
+		include includes/localDependencies.pug
+
 		script(src="/public/scripts/login.js",  
 			crossorigin="anonymous")
-
-		link(rel="stylesheet",
-			href="/public/styles/style.css")
 
 		// Top Navbar
 		include includes/navbar.pug
@@ -41,7 +41,7 @@ html(class="has-navbar-fixed-top has-background-white-ter")
 						button(type="button", class="button" id="showPasswordBtn") Show
 				
 				// Error message
-				div(class="errorMessage content columns is-centered" id="errorMessage")= errorMessage
+				div(class="error-message content columns is-centered" id="errorMessage")= errorMessage
 				
 				// Buttons
 				div(class="buttons is-centered")
