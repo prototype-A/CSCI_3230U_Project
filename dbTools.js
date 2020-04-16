@@ -2,6 +2,7 @@ const dbUrl =  'mongodb://localhost:27017/CSCI_3230U_Project';
 console.log('Connecting to MongoDB at: ' + dbUrl);
 
 const collections = {
+	CURRENCY_EXCHANGE: 'currencyExchange',
 	PRODUCTS: 'products',
 	USERS: 'users'
 }
@@ -16,6 +17,13 @@ const itemCondition = {
 	USED: 'Used',
 	REFURBISHED: 'Refurbished',
 	DAMAGED: 'Damaged'
+}
+
+const currencyType = {
+	CAD: 'CAD',
+	EUR: 'EUR',
+	GBP: 'GBP',
+	USD: 'USD'
 }
 
 // MongoDB
@@ -59,9 +67,25 @@ let productSchema = new Schema({
 	stockCount: Number,
 	price: Number,
 	taxIncluded: Boolean,
-	shippingPrice: Number
+	shippingCost: Number
 }, { collection: collections.PRODUCTS });
 let Product = mongoose.model('product', productSchema);
+
+// Currency conversion rate
+let currencySchema = new Schema({
+	name: {
+		type: String,
+		unique: true,
+		index: true
+	},
+	abbreviation: {
+		type: String,
+		unique: true,
+		index: true
+	},
+	conversionRate: Number
+}, { collection: collections.CURRENCY_EXCHANGE });
+let Currency = mongoose.model('currency', currencySchema);
 
 // Hashing
 const bcrypt = require('bcrypt');
@@ -160,7 +184,7 @@ function getUser(userId) {
 
 
 // Create product
-function createProduct(name, description, condition, amount, price, taxIncluded, shippingPrice) {
+function createProduct(name, description, condition, amount, price, taxIncluded, shippingCost) {
 	let newProduct = new Product({
 		name: name,
 		productId: new mongoose.Types.ObjectId(),
@@ -169,7 +193,7 @@ function createProduct(name, description, condition, amount, price, taxIncluded,
 		stockCount: amount,
 		price: price,
 		taxIncluded: taxIncluded,
-		shippingPrice: shippingPrice
+		shippingCost: shippingCost
 	});
 	newProduct.save((error) => {
 		if (error) {
@@ -181,9 +205,28 @@ function createProduct(name, description, condition, amount, price, taxIncluded,
 }
 
 
+// Currency exchange rate
+function addCurrency(name, abbr, rate) {
+	let currency = new Currency({
+		name: name,
+		abbreviation: abbr,
+		conversionRate: rate
+	});
+	currency.save((error) => {
+		if (error) {
+			console.error(`[ERROR] Failed to add ${name} (${abbr}) to collection ${collections.CURRENCY_EXCHANGE} in database`);
+		} else {
+			console.log(`Added ${name} (${abbr}) to ${collections.CURRENCY_EXCHANGE}`);
+		}
+	});
+}
+
+
 // Module exports
 module.exports = {
 	collections,
+	Currency,
+	currencyType,
 	dbUrl,
 	User,
 	userType,
@@ -194,5 +237,6 @@ module.exports = {
 	checkUserExists,
 	processLogin,
 	getUser,
-	createProduct
+	createProduct,
+	addCurrency
 }

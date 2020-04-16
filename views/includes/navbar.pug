@@ -26,12 +26,14 @@ nav(class="navbar is-fixed-top", role="navigation" aria-label="dropdown navigati
 			// Currency selector dropdown
 			div(class="navbar-item has-dropdown is-hoverable")
 				a(class="navbar-link")
-					if (currency == "USD")
-						+currencyDisplay("USD", "fa-dollar-sign")
-					else if (currency == "EUR")
+					if (currency == "EUR")
 						+currencyDisplay("EUR", "fa-euro-sign")
 					else if (currency == "GBP")
 						+currencyDisplay("GBP", "fa-pound-sign")
+					else if (currency == "JPY")
+						+currencyDisplay("JPY", "fa-yen-sign")
+					else if (currency == "USD")
+						+currencyDisplay("USD", "fa-dollar-sign")
 					else
 						// Default to CAD
 						+currencyDisplay("CAD", "fa-dollar-sign")
@@ -41,6 +43,7 @@ nav(class="navbar is-fixed-top", role="navigation" aria-label="dropdown navigati
 					+currencyDropdownItem("USD", "fa-dollar-sign", "usdSelector")
 					+currencyDropdownItem("EUR", "fa-euro-sign", "eurSelector")
 					+currencyDropdownItem("GBP", "fa-pound-sign", "gbpSelector")
+					+currencyDropdownItem("JPY", "fa-yen-sign", "jpySelector")
 			
 			// Shopping cart
 			a(href="/cart", class="navbar-item" id="shoppingCartBtn")

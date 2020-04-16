@@ -1,8 +1,10 @@
 let numItems = 20;
-let allItemsRegex = '.*';
+const allItemsRegex = '.*';
 let items;
+let currencySymbol = '$';
 
 $(document).ready(function() {
+	
 	// Get items from server
 	queryItems(numItems, allItemsRegex);
 	
@@ -104,11 +106,21 @@ function sortItemsByString(item1, item2, ascending) {
 	return (a < b) ? 1 : (a > b) ? -1 : 0;
 }
 
+function formatPrice(price) {
+	let formattedPrice = price;
+	
+	// Perform currency conversion
+	//TODO: Persist selected currency to convert price on browser upon receiving items
+	//formattedPrice = formattedPrice * currentRate;
+	
+	return currencySymbol + formattedPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 // Create items on screen
 function populateItems(items) {
 	for (let i = 0; i < items.length; i++) {
 		// Shipping cost text
-		let itemShippingCost = (items[i].shippingPrice == 0) ? 'Free' : `$${items[i].shippingPrice.toFixed(2)}`;
+		let itemShippingCost = (items[i].shippingCost == 0) ? 'Free' : `${formatPrice(items[i].shippingCost)}`;
 		
 		// Create a card for each item
 		$('#items')
@@ -146,7 +158,7 @@ function populateItems(items) {
 						.append($('<span>')
 							// Item price
 							.addClass('price')
-							.text(`$${items[i].price.toFixed(2)}`)
+							.text(`${formatPrice(items[i].price)}`)
 						)
 					)
 				)
@@ -191,6 +203,7 @@ function populateItems(items) {
 		.append($('<div>')
 			// Shipping price
 			.addClass('price-small')
+			.addClass('shipping-cost')
 			.text(`${itemShippingCost} Shipping`)
 		)
 	}

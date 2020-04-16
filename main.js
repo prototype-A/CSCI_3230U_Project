@@ -205,10 +205,21 @@ app.get('/profile', (req, res) => {
 });
 
 
-// Persist browser currency change
+// Change currency
 app.post('/changeCurrency', (req, res) => {
-	req.session.currency = req.body.currency;
-	res.end();
+	db.Currency.find({
+		abbreviation: req.body.currency
+	}).then(function(result) {
+		if (result.length > 0) {
+			req.session.currency = result[0].abbreviation;
+			res.send({
+				oldRate: req.body.currentRate,
+				newRate: result[0].conversionRate
+			});
+		} else {
+			res.end();
+		}
+	});
 });
 
 
