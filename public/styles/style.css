@@ -79,6 +79,11 @@ body {
 .navbar {
 	height: 5em;
 }
+.navbar-center {
+	flex-grow: 1;
+	flex-direction: column;
+	justify-content: center;
+}
 .navbar-item {
 	padding: 1em;
 }
@@ -94,7 +99,7 @@ a.navbar-item {
 	text-align: right;
 }
 .navbar-home {
-	padding: 1em 3em;
+	padding: 1em 6em;
 }
 .navbar-link {
 	font-size: 1.5em;

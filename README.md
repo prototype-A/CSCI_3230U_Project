@@ -16,6 +16,7 @@ Andre Dallaire
 * Run `node .\insertData.js` to create sample data for the website in MongoDB
 * Creates 2 users (admin:admin, user:user)
 * Creates some sample products
+* Inserts some other misc data, such as CAD currency conversion rates
   
 ### Running the web server
 * Run `npm install` to download required node_modules
@@ -25,5 +26,6 @@ Andre Dallaire
   
 ### Notes/Issues/Todo
 * Conversion rates are retrieved as of 5:45pm, Apr. 16, 2020
-* Selected currency persists visually in browser but not in code
-* Currently no cart functionality
+* Selected currency persists visually in browser but does not save converted prices nor retrieve item prices in that currency
+* Shopping cart is not functional
+* No checkout functionality

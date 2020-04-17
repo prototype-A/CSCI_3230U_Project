@@ -20,7 +20,10 @@ nav(class="navbar is-fixed-top", role="navigation" aria-label="dropdown navigati
 
 	div(class="navbar-menu")
 		a(href="/", class="navbar-item navbar-home is-centered") Home
-	
+		
+		// Middle of navbar
+		div(class="navbar-center has-text-centered")
+		
 		// Right side of navbar
 		div(class="navbar-end")
 			// Currency selector dropdown
@@ -46,9 +49,10 @@ nav(class="navbar is-fixed-top", role="navigation" aria-label="dropdown navigati
 					+currencyDropdownItem("JPY", "fa-yen-sign", "jpySelector")
 			
 			// Shopping cart
-			a(href="/cart", class="navbar-item" id="shoppingCartBtn")
+			a(href="/mycart", class="navbar-item" id="shoppingCartBtn")
 				img(class="currency-icon fas fa-shopping-cart")
-				p(class="is-centered currency-text") Your Cart
+				p(class="is-centered currency-text") Your Cart 
+					span(id="numItemsInCart") (0)
 			
 			if (username)
 				div(class="navbar-item navbar-greeting") Hello,

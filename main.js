@@ -273,6 +273,16 @@ app.post('/deleteUser', (req, res) => {
 });
 
 
+// View shopping cart
+app.get('/mycart', (req, res) => {
+	//TODO: Implement shopping cart functionality
+	res.render('shoppingCart', {
+		title: 'My shopping cart',
+		currency: req.session.currency
+	});
+});
+
+
 // Start Express listener on port
 app.set('port', PORT);
 app.listen(app.get('port'), function() {
