@@ -4,12 +4,12 @@ window.onload = function() {
 		$.post('/register', {
 			username: $('#usernameField').val()
 		}, function(res) {
-			if (res.usernameResult === 'rejected') {
-				// Username exists
-				usernameRejected(res.usernameErrorMessage);
-			} else {
+			if (res.usernameResult === 'accepted') {
 				// Username available
 				usernameAccepted();
+			} else {
+				// Username exists
+				usernameRejected(res.usernameErrorMessage);
 			}
 		});
 	});
@@ -19,12 +19,12 @@ window.onload = function() {
 		$.post('/register', {
 			password: $('#passwordField').val()
 		}, function(res) {
-			if (res.passwordResult === 'rejected') {
-				// Password does not meet requirements
-				passwordRejected(res.passwordErrorMessage);
-			} else {
+			if (res.passwordResult === 'accepted') {
 				// Password meets requirements
 				passwordAccepted();
+			} else {
+				// Password does not meet requirements
+				passwordRejected(res.passwordErrorMessage);
 			}
 		});
 	});
@@ -40,6 +40,17 @@ window.onload = function() {
 		}
 	});
 	
+	// Terms and conditions modal
+	$('#termsAndConditionsTrigger').click(function() {
+		$('#termsAndConditionsModal').show();
+	});
+	$('#modalBackground').click(function() {
+		$('#termsAndConditionsModal').hide();
+	});
+	$('#closeTermsAndConditionsModal').click(function() {
+		$('#termsAndConditionsModal').hide();
+	});
+	
 	// Submit form
 	$('#registrationForm').submit(function(event) {
 		// Prevent redirect on submit
@@ -50,13 +61,15 @@ window.onload = function() {
 		$('#usernameField').removeClass('is-danger');
 		$('#passwordErrorMessage').text('');
 		$('#passwordField').removeClass('is-danger');
+		$('#termsAndConditionsErrorMessage').text();
 		
 		// Send form data to server for validation
 		$.post('/register', {
 			username: $('#usernameField').val(),
-			password: $('#passwordField').val()
+			password: $('#passwordField').val(),
+			termsAccepted: $('#termsAndConditionsCheckbox[type=checkbox]').is(':checked')
 		}, function(res) {
-			if (res.usernameResult === 'rejected' || res.passwordResult === 'rejected') {
+			if (res.usernameResult === 'rejected' || res.passwordResult === 'rejected' || (typeof res.termsAccepted !== 'undefined' && !res.termsAccepted)) {
 				// Show username error
 				if (res.usernameResult === 'rejected') {
 					usernameRejected(res.usernameErrorMessage);
@@ -65,6 +78,8 @@ window.onload = function() {
 				if (res.passwordResult === 'rejected') {
 					passwordRejected(res.passwordErrorMessage);
 				}
+				// Show terms and conditions error
+				$('#termsAndConditionsErrorMessage').text(res.termsErrorMessage);
 			} else if (res.redirect) {
 				// Username and password accepted; redirect to homepage
 				window.location = res.redirect;

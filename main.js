@@ -67,12 +67,20 @@ app.post('/register', (req, res) => {
 	let response = {
 		usernameErrorMessage: '',
 		passwordErrorMessage: '',
+		termsErrorMessage: '',
 		usernameResult: '',
-		passwordResult: ''
+		passwordResult: '',
+		termsAccepted: false
+	}
+	
+	// Check if accepted terms and conditions
+	response.termsAccepted = (req.body.termsAccepted === 'true') ? req.body.termsAccepted : false;
+	if (response.termsAccepted !== true) {
+		response.termsErrorMessage = 'You must read and accept the terms and conditions';
 	}
 	
 	// Check username
-	if (req.body.username !== '' && req.body.username !== undefined) {
+	if (req.body.username !== '' || req.body.username !== undefined) {
 		db.User.find({
 			username: req.body.username
 		}).then(function(result) {
@@ -104,7 +112,7 @@ app.post('/register', (req, res) => {
 				response.passwordResult = 'rejected';
 			}
 			
-			if (response.usernameResult === response.passwordResult && response.usernameResult === 'accepted') {
+			if (response.usernameResult === response.passwordResult && response.usernameResult === 'accepted' && response.termsAccepted) {
 				// Username and password passed; create user
 				let passwordHash = bcrypt.hashSync(req.body.password, salt);
 				let userId = new mongoose.Types.ObjectId();
@@ -120,7 +128,7 @@ app.post('/register', (req, res) => {
 					if (error) {
 						console.error(`[ERROR] Failed to add user ${req.body.username} to collection ${db.collections.USERS} in database`);
 					} else {
-						console.log(`${req.body.username} added to ${collections.USERS}`);
+						console.log(`${req.body.username} added to ${db.collections.USERS}`);
 					}
 				});
 				
@@ -128,7 +136,7 @@ app.post('/register', (req, res) => {
 				req.session.username = req.body.username;
 				req.session.userId = userId;
 				
-				sendRedirect(res, '/');
+				sendRedirect(res, HOME_PATH);
 			} else {
 				// Send errors back to browser
 				res.send(response);
